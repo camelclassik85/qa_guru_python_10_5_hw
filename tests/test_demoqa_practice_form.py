@@ -1,4 +1,4 @@
-import os
+import os, platform
 from selene import browser, be, have, command
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
@@ -17,7 +17,8 @@ def test_fill_registration_form_1():
     browser.element('.react-datepicker__month-select').click().element('[value="6"]').click()
     browser.element('.react-datepicker__day--020').click()
     browser.element('#subjectsInput').should(be.blank).type("comp").press_enter()
-    browser.element('#subjectsInput').type('eng').press_enter()
+    browser.element('#subjectsInput').type('eng')
+    browser.element('#react-select-2-option-0').click()
     browser.element("[for='hobbies-checkbox-1']").click()
     browser.element("[for='hobbies-checkbox-3']").click()
     browser.element('#uploadPicture').send_keys(os.path.abspath('cat.jpg'))
@@ -53,11 +54,19 @@ def test_fill_registration_form_2():
     browser.element('#userNumber').should(be.blank).type("9876543210")
     # С очисткой поля ввода тест падает, так как сбрасываются все элементы в div с id=app. Это найденный баг
     browser.element('#dateOfBirthInput').click()
-    browser.driver.find_element(By.CSS_SELECTOR, '#dateOfBirthInput').send_keys(Keys.COMMAND, "a")
+    if platform.system() == 'Windows':
+        browser.driver.find_element(By.CSS_SELECTOR, '#dateOfBirthInput').send_keys(Keys.CONTROL, "a")
+    elif platform.system() == 'Darwin':
+        browser.driver.find_element(By.CSS_SELECTOR, '#dateOfBirthInput').send_keys(Keys.COMMAND, "a")
+    else:
+        print("Uncompatible operating system. Test stopped")
+        return None
+    # browser.element('#dateOfBirthInput').send_keys(Keys.COMMAND, 'a').type('20 Jul 1955').press_enter()  # for Mac
     browser.element('#dateOfBirthInput').type('20 Jul 1955').press_enter()
-    browser.element('#subjectsInput').should(be.blank).type("comp").press_enter()
-    browser.element('#subjectsInput').type('eng').press_enter()
-    browser.element("[for='hobbies-checkbox-1']").click()
+    browser.element('#subjectsInput').should(be.blank).send_keys("comp").press_enter()
+    browser.element('#subjectsInput').click().send_keys('eng')
+    browser.element('#react-select-2-option-0').click()
+    browser.element("[for='hobbies-checkbox-1']").should(be.clickable).click()
     browser.element("[for='hobbies-checkbox-3']").click()
     browser.element('#uploadPicture').send_keys(os.path.abspath('cat.jpg'))
     browser.element('#currentAddress').should(be.blank).type('Good for good 123456')
