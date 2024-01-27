@@ -55,14 +55,15 @@ def test_fill_registration_form_2():
     # С очисткой поля ввода тест падает, так как сбрасываются все элементы в div с id=app. Это найденный баг
     browser.element('#dateOfBirthInput').click()
     if platform.system() == 'Windows':
-        browser.driver.find_element(By.CSS_SELECTOR, '#dateOfBirthInput').send_keys(Keys.CONTROL, "a")
+        # browser.driver.find_element(By.CSS_SELECTOR, '#dateOfBirthInput').send_keys(Keys.CONTROL, "a")
+        browser.element('#dateOfBirthInput').send_keys(Keys.CONTROL, 'a').type('20 Jul 1955').press_enter()
     elif platform.system() == 'Darwin':
-        browser.driver.find_element(By.CSS_SELECTOR, '#dateOfBirthInput').send_keys(Keys.COMMAND, "a")
+        # browser.driver.find_element(By.CSS_SELECTOR, '#dateOfBirthInput').send_keys(Keys.COMMAND, "a")
+        browser.element('#dateOfBirthInput').send_keys(Keys.COMMAND, 'a').type('20 Jul 1955').press_enter()
     else:
         print("Uncompatible operating system. Test stopped")
         return None
-    # browser.element('#dateOfBirthInput').send_keys(Keys.COMMAND, 'a').type('20 Jul 1955').press_enter()  # for Mac
-    browser.element('#dateOfBirthInput').type('20 Jul 1955').press_enter()
+    # browser.element('#dateOfBirthInput').type('20 Jul 1955').press_enter() # нужно, если через закомменченные делать
     browser.element('#subjectsInput').should(be.blank).send_keys("comp").press_enter()
     browser.element('#subjectsInput').click().send_keys('eng')
     browser.element('#react-select-2-option-0').click()
